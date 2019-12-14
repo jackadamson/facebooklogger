@@ -1,12 +1,21 @@
 from pymessenger.bot import Bot
 import logging
-from facebooklogger.settings import FB_ACCESS_TOKEN, FB_USER_ID
+from facebooklogger.settings import PAGE_ACCESS_TOKEN, FB_USER_ID
 
 
 class FacebookLogger(logging.Handler):
     def __init__(
-        self, user_id=FB_USER_ID, access_token=FB_ACCESS_TOKEN, level=logging.NOTSET
+        self, user_id=FB_USER_ID, access_token=PAGE_ACCESS_TOKEN, level=logging.NOTSET
     ):
+        if access_token is None:
+            raise ValueError(
+                "access_token not provided, set the PAGE_ACCESS_TOKEN environment variable"
+            )
+        if access_token is None:
+            raise ValueError(
+                "user_id not provided, set the FB_USER_ID environment variable"
+            )
+        logging.Handler.__init__(self, level)
         if FB_USER_ID is None:
             raise ValueError("FB_USER_ID not set")
         logging.Handler.__init__(self, level)

@@ -1,6 +1,6 @@
 import requests
 import urllib.parse
-from facebooklogger.settings import FB_ACCESS_TOKEN
+from facebooklogger.settings import PAGE_ACCESS_TOKEN
 
 FB_BASE = "https://graph.facebook.com"
 
@@ -16,7 +16,7 @@ def check_success(req):
 def get_users(page_id):
     conversations_request = requests.get(
         f"{FB_BASE}/{page_id}",
-        params={"access_token": FB_ACCESS_TOKEN, "fields": "conversations"},
+        params={"access_token": PAGE_ACCESS_TOKEN, "fields": "conversations"},
     )
     check_success(conversations_request)
     conv_data = conversations_request.json()["conversations"]["data"]
@@ -26,7 +26,7 @@ def get_users(page_id):
 def resolve_conversation(page_id, conv_id):
     participants_request = requests.get(
         f"{FB_BASE}/{conv_id}",
-        params={"access_token": FB_ACCESS_TOKEN, "fields": "participants"},
+        params={"access_token": PAGE_ACCESS_TOKEN, "fields": "participants"},
     )
     check_success(participants_request)
     participants = participants_request.json()["participants"]["data"]
@@ -35,7 +35,11 @@ def resolve_conversation(page_id, conv_id):
 
 
 def main():
-    me_request = requests.get(FB_BASE + "/me", params={"access_token": FB_ACCESS_TOKEN})
+    if PAGE_ACCESS_TOKEN is None:
+        print("Missing environment variable 'PAGE_ACCESS_TOKEN', check README.md")
+    me_request = requests.get(
+        FB_BASE + "/me", params={"access_token": PAGE_ACCESS_TOKEN}
+    )
     check_success(me_request)
     page_id = me_request.json()["id"]
     page_name = me_request.json()["name"]
